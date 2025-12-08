@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Khadim Fall - BTS SIO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- 1. VARIABLES --- */
+        :root {
+            --bg-color: #0f172a;      
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --nav-bg: rgba(15, 23, 42, 0.7);
+            --modal-bg: #1e293b;
+            --primary: #38bdf8;       
+            --secondary: #818cf8;     
+            --text-main: #f1f5f9;     
+            --text-muted: #94a3b8;
+            --particle-color: #38bdf8;
+            --shadow-color: rgba(0,0,0,0.3);
+        }
+
+        body.light-mode {
+            --bg-color: #eef2f6;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --nav-bg: rgba(255, 255, 255, 0.6);
+            --modal-bg: #ffffff;
+            --primary: #2563eb;       
+            --secondary: #4f46e5;
+            --text-main: #1e293b;     
+            --text-muted: #475569;
+            --particle-color: #2563eb;
+            --shadow-color: rgba(0,0,0,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; cursor: none; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; overflow-x: hidden; transition: 0.5s; }
+
+        /* --- 2. CURSEUR --- */
+        #cursor {
+            width: 20px; height: 20px; border: 2px solid var(--primary); border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%); transition: transform 0.1s, background 0.2s;
+            mix-blend-mode: difference;
+        }
+        .hovered-cursor { transform: translate(-50%, -50%) scale(2.5) !important; background: rgba(56, 189, 248, 0.2); border-color: transparent; }
+        #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        /* --- 3. MENU --- */
+        nav {
+            position: fixed; top: 25px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 1200px;
+            background: var(--nav-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 15px 40px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center; transition: 0.5s;
+        }
+
+        .logo { font-weight: 800; font-size: 1.5rem; color: var(--primary); letter-spacing: 1px; }
+        .nav-items { display: flex; align-items: center; gap: 30px; }
+        .nav-links { display: flex; gap: 25px; list-style: none; }
+        
+        .nav-links a { 
+            font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem;         
+            text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); 
+            text-decoration: none; transition: 0.3s; position: relative;
+        }
+        .nav-links a:hover { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
+
+        #theme-toggle { cursor: pointer; padding: 10px; border-radius: 50%; transition: 0.3s; font-size: 1.1rem; }
+        #theme-toggle:hover { color: var(--primary); transform: rotate(15deg); }
+
+        .burger { display: none; cursor: pointer; }
+        .burger div { width: 25px; height: 3px; background: var(--text-main); margin: 5px; }
+
+        /* --- 4. HEADER --- */
+        header { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; }
+
+        .glitch-wrapper { position: relative; display: inline-block; }
+        h1 { font-size: 5rem; font-weight: 800; color: var(--text-main); position: relative; z-index: 1; }
+        h1::before, h1::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8; }
+        h1::before { color: #0ff; z-index: -1; animation: glitch-effect 3s infinite; }
+        h1::after { color: #f0f; z-index: -2; animation: glitch-effect 2s infinite reverse; }
+
+        .subtitle {
+            font-size: 1.8rem; margin-top: 10px; font-weight: 600;
+            background: linear-gradient(90deg, var(--text-muted), var(--primary), var(--secondary), var(--text-muted));
+            background-size: 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: gradient-flow 5s ease infinite;
+        }
+
+        @keyframes glitch-effect {
+            0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
+            5% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+            10% { clip-path: inset(10% 0 50% 0); transform: translate(-1px, 2px); }
+            25% { opacity: 0; } 30% { opacity: 1; clip-path: none; transform: none; }
+            100% { clip-path: none; transform: none; }
+        }
+        @keyframes gradient-flow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .action-buttons { margin-top: 3rem; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; opacity: 0; animation: fadeInUp 1s ease-out forwards 0.5s; }
+        .btn-cta, .btn-outline { padding: 12px 30px; border-radius: 50px; font-weight: 600; text-decoration: none; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+        .btn-cta { background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4); }
+        .btn-outline { border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3); }
+
+        /* --- 5. CONTENU --- */
+        section { padding: 6rem 10%; }
+        .section-title { font-size: 2.5rem; text-align: center; margin-bottom: 4rem; position: relative; }
+        .section-title::after { content: ''; display: block; width: 60px; height: 4px; background: var(--primary); margin: 15px auto 0; border-radius: 2px; }
+
+        .timeline { position: relative; max-width: 800px; margin: 0 auto; }
+        .timeline::after { content: ''; position: absolute; width: 4px; background: rgba(56, 189, 248, 0.3); top: 0; bottom: 0; left: 50%; margin-left: -2px; }
+        .timeline-item { padding: 10px 40px; position: relative; width: 50%; }
+        .timeline-item:nth-child(odd) { left: 0; text-align: right; }
+        .timeline-item:nth-child(even) { left: 50%; text-align: left; }
+        .timeline-dot { width: 16px; height: 16px; background: var(--primary); border-radius: 50%; position: absolute; top: 25px; right: -8px; z-index: 10; }
+        .timeline-item:nth-child(even) .timeline-dot { right: auto; left: -8px; }
+        .timeline-content { padding: 25px; background: var(--card-bg); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 5px 15px var(--shadow-color); transition: 0.3s; }
+        .timeline-content:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .timeline-content small { color: var(--secondary); font-weight: bold; display: block; margin-bottom: 5px; }
+
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card { background: var(--card-bg); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; transform-style: preserve-3d; perspective: 1000px; }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px var(--shadow-color); border-color: var(--primary); }
+        .card h3 { color: var(--text-main); margin-bottom: 10px; }
+        .card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
+        .tags .tag { background: rgba(56, 189, 248, 0.1); color: var(--primary); padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(56, 189, 248, 0.2); margin-right: 5px; display: inline-block; margin-bottom: 5px;}
+        
+        .btn-details { color: var(--primary); font-weight: 600; text-decoration: none; border: 1px solid var(--primary); padding: 8px 20px; border-radius: 8px; align-self: start; transition: 0.3s; cursor: pointer; background: transparent; }
+        .btn-details:hover { background: var(--primary); color: white; }
+
+        .veille-tools { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; flex-wrap: wrap; }
+        .tool-badge { background: var(--card-bg); padding: 8px 20px; border-radius: 30px; border: 1px solid var(--primary); color: var(--text-main); display: flex; gap: 10px; align-items: center;}
+
+        .contact-container { max-width: 600px; margin: auto; background: var(--card-bg); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        input, textarea { width: 100%; padding: 15px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-main); margin-bottom: 20px; outline: none; transition: 0.3s; font-family: inherit;}
+        body.light-mode input { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); }
+        input:focus, textarea:focus { border-color: var(--primary); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: none; justify-content: center; align-items: center; opacity: 0; transition: 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background: var(--modal-bg); width: 90%; max-width: 600px; padding: 30px; border-radius: 20px; position: relative; transform: translateY(50px); transition: 0.3s; border: 1px solid var(--primary); color: var(--text-main); }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+        .modal-list li { margin-bottom: 10px; margin-left: 20px; }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            nav { width: 95%; top: 10px; padding: 10px 20px; }
+            .nav-links { position: absolute; top: 70px; left: 0; width: 100%; background: var(--modal-bg); flex-direction: column; padding: 20px; border-radius: 20px; display: none; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+            .nav-links.nav-active { display: flex; animation: fadeInUp 0.3s; }
+            .burger { display: block; }
+            .timeline::after { left: 20px; }
+            .timeline-item { width: 100%; padding-left: 50px; text-align: left; }
+            .timeline-item:nth-child(odd) { left: 0; }
+            .timeline-item:nth-child(even) .timeline-dot { left: 12px; }
+            .timeline-dot { left: 12px; }
+            #cursor { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <nav>
+        <div class="logo">KF.</div>
+        <div class="nav-items">
+            <ul class="nav-links">
+                <li><a href="#accueil" class="hover-target">Accueil</a></li>
+                <li><a href="#parcours" class="hover-target">Parcours</a></li>
+                <li><a href="#projets" class="hover-target">Projets</a></li>
+                <li><a href="#certifs" class="hover-target">Diplômes</a></li>
+                <li><a href="#veille" class="hover-target">Veille</a></li>
+                <li><a href="#contact" class="hover-target">Contact</a></li>
+            </ul>
+            <i id="theme-toggle" class="fas fa-sun hover-target"></i>
+            <div class="burger hover-target">
+                <div></div><div></div><div></div>
+            </div>
+        </div>
+    </nav>
+
+    <header id="accueil">
+        <div class="glitch-wrapper">
+            <h1 data-text="Khadim Fall">Khadim Fall</h1>
+        </div>
+        <p class="subtitle">Étudiant BTS SIO au Lycée de l'Hautil</p>
+
+        <div class="action-buttons">
+            <a href="#projets" class="btn-cta hover-target">Voir Projets</a>
+            
+            <a href="https://gitlab.com/fall6755537/FALL/-/blob/925b9ca150be2d5563d899aa61b075671f12df95/TablSynth.pdf" target="_blank" class="btn-outline hover-target">
+                <i class="fas fa-table"></i> Tableau E5
+            </a>
+            <a href="fichiers/cv-khadim-fall.pdf" target="_blank" class="btn-outline hover-target"><i class="fas fa-file-pdf"></i> CV</a>
+        </div>
+    </header>
+
+    <section id="parcours">
+        <h2 class="section-title reveal">Mon Parcours</h2>
+        <div class="timeline">
+            <div class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content hover-target">
+                    <small>2025 - 2026</small>
+                    <h3>BTS SIO - 2ème Année</h3>
+                    <p><strong>Lycée de l'Hautil</strong><br>Préparation E4, E5 et E6.</p>
+                </div>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content hover-target">
+                    <small>Mai - Juin 2025</small>
+                    <h3>Stage de 1ère année</h3>
+                    <p><strong>Plaine Commune Habitat</strong><br>Technicien support informatique.</p>
+                </div>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content hover-target">
+                    <small>2024 - 2025</small>
+                    <h3>BTS SIO - 1ère Année</h3>
+                    <p><strong>Lycée de l'Hautil</strong><br>Bases réseaux & dev.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projets">
+        <h2 class="section-title reveal">Projets & Blocs</h2>
+        <div class="projects-grid">
+            
+            <article class="card reveal hover-target">
+                <div>
+                    <h3>Stage Plaine Commune Habitat</h3>
+                    <p>Missions réalisées lors de mon stage.</p>
+                    <div class="tags"><span class="tag">Support</span><span class="tag">GLPI</span></div>
+                </div>
+                <a href="https://gitlab.com/fall6755537/FALL/-/blob/925b9ca150be2d5563d899aa61b075671f12df95/Stage/CRA_Stage.md" target="_blank" class="btn-details hover-target" style="text-align: center;">Voir GitLab</a>
+            </article>
+
+            <article class="card reveal hover-target">
+                <div>
+                    <h3>BLOC 1</h3>
+                    <p>Support et mise à disposition de services informatiques.</p>
+                    <div class="tags"><span class="tag">Maintenance</span><span class="tag">Ticketing</span></div>
+                </div>
+                <a href="https://gitlab.com/fall6755537/FALL/-/tree/925b9ca150be2d5563d899aa61b075671f12df95/Projets/BLOC1" target="_blank" class="btn-details hover-target" style="text-align: center;">Voir GitLab</a>
+            </article>
+
+            <article class="card reveal hover-target">
+                <div>
+                    <h3>BLOC 2</h3>
+                    <p>Administration des systèmes et des réseaux.</p>
+                    <div class="tags"><span class="tag">Système</span><span class="tag">Réseau</span></div>
+                </div>
+                <a href="https://gitlab.com/fall6755537/FALL/-/tree/925b9ca150be2d5563d899aa61b075671f12df95/Projets/BLOC2" target="_blank" class="btn-details hover-target" style="text-align: center;">Voir GitLab</a>
+            </article>
+
+            <article class="card reveal hover-target">
+                <div>
+                    <h3>BLOC 3</h3>
+                    <p>Cybersécurité des services informatiques.</p>
+                    <div class="tags"><span class="tag">Sécurité</span><span class="tag">ANSSI</span></div>
+                </div>
+                <a href="https://gitlab.com/fall6755537/FALL/-/tree/925b9ca150be2d5563d899aa61b075671f12df95/Projets/BLOC3" target="_blank" class="btn-details hover-target" style="text-align: center;">Voir GitLab</a>
+            </article>
+
+            <article class="card reveal hover-target">
+                <div>
+                    <h3>Cyber</h3>
+                    <p>Débutant en Pentesting (CTF sur TryHackMe) et veille active.</p>
+                    <div class="tags"><span class="tag">CTF</span><span class="tag">TryHackMe</span></div>
+                </div>
+                <a href="https://gitlab.com/fall6755537/FALL/-/tree/925b9ca150be2d5563d899aa61b075671f12df95/Projets/Cyber" target="_blank" class="btn-details hover-target" style="text-align: center;">Voir GitLab</a>
+            </article>
+
+            <article class="card reveal hover-target">
+                <div>
+                    <h3>Portfolio</h3>
+                    <p>Création de ce site web.</p>
+                    <div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span></div>
+                </div>
+                <button class="btn-details hover-target" onclick="openModal('modal3')">Détails</button>
+            </article>
+
+        </div>
+    </section>
+
+    <section id="certifs">
+        <h2 class="section-title reveal">Mes Certifications</h2>
+        <div class="projects-grid" style="display: flex; justify-content: center;">
+            <article class="card reveal hover-target" style="text-align:center; max-width: 800px; width: 100%;">
+                <i class="fas fa-certificate" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
+                <h3>Certifications Validées</h3>
+                <p>J'ai obtenu plusieurs attestations validant mes compétences en cybersécurité et droit du numérique.</p>
+                
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin: 20px 0;">
+                    <span class="tag" style="padding: 8px 15px;">ANSSI - SecNumAcadémie</span>
+                    <span class="tag" style="padding: 8px 15px;">CNIL - Atelier RGPD (5 Modules)</span>
+                    <span class="tag" style="padding: 8px 15px;">Sensibilisation Cybersécurité</span>
+                </div>
+
+                <a href="https://gitlab.com/fall6755537/FALL/-/tree/925b9ca150be2d5563d899aa61b075671f12df95/Certifications" target="_blank" class="btn-cta hover-target" style="display: inline-block; margin-top: 10px;">
+                   Voir les justificatifs (GitLab)
+                </a>
+            </article>
+        </div>
+    </section>
+
+    <section id="veille">
+        <h2 class="section-title reveal">Veille Technologique</h2>
+        
+        <div class="veille-tools reveal">
+            <div class="tool-badge hover-target"><i class="fas fa-rss"></i> Feedly</div>
+            <div class="tool-badge hover-target"><i class="fab fa-google"></i> Alerts</div>
+            <div class="tool-badge hover-target"><i class="fab fa-twitter"></i> Twitter</div>
+        </div>
+        
+        <div class="projects-grid" style="display: flex; justify-content: center;">
+            <article class="card reveal hover-target" style="max-width: 600px; width: 100%;">
+                <div>
+                    <h3>Mon Dossier de Veille</h3>
+                    <p>Consultez mes recherches, articles analysés et synthèses sur mon dépôt GitLab.</p>
+                    <div class="tags"><span class="tag">Markdown</span><span class="tag">GitLab</span></div>
+                </div>
+                <a href="https://gitlab.com/fall6755537/FALL/-/blob/925b9ca150be2d5563d899aa61b075671f12df95/VeilleTechno.md" target="_blank" class="btn-details hover-target" style="text-align: center;">Accéder à la Veille</a>
+            </article>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2 class="section-title reveal">Contact</h2>
+        <div class="contact-container reveal">
+            <form action="https://formspree.io/f/TON_CODE_ICI" method="POST">
+                <input type="text" name="name" placeholder="Nom" required class="hover-target">
+                <input type="email" name="email" placeholder="Email" required class="hover-target">
+                <textarea name="message" rows="5" placeholder="Message" required class="hover-target"></textarea>
+                <button type="submit" class="btn-cta hover-target" style="border:none; cursor:pointer; width:100%;">Envoyer</button>
+            </form>
+        </div>
+    </section>
+
+    <footer style="text-align:center; padding: 3rem; background: rgba(10,15,30,0.95); color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem;">
+        <p style="margin-bottom: 10px;">© 2026 - Khadim Fall - BTS SIO</p>
+        <p>
+            <a href="#" onclick="openModal('modal_legales'); return false;" class="hover-target" style="margin: 0 10px; color: var(--text-muted);">Mentions Légales</a> | 
+            <a href="https://github.com/ton-github" target="_blank" class="hover-target" style="margin: 0 10px; color: var(--text-muted);">GitHub</a> | 
+            <a href="https://www.linkedin.com/in/khadim-fall-7758022b3/" target="_blank" class="hover-target" style="margin: 0 10px; color: var(--text-muted);">LinkedIn</a>
+        </p>
+        <p style="margin-top: 15px; font-size: 0.8rem; opacity: 0.6;">Site réalisé à la main (HTML/CSS/JS)</p>
+    </footer>
+
+    <div id="modal_legales" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeAllModals()">&times;</span>
+            <h3>Mentions Légales</h3>
+            <p><strong>1. Éditeur du site :</strong></p>
+            <ul class="modal-list">
+                <li>Nom : Khadim Fall</li>
+                <li>Statut : Étudiant en BTS SIO</li>
+                <li>Contact : Via le formulaire du site</li>
+            </ul>
+            <p><strong>2. Hébergeur :</strong></p>
+            <ul class="modal-list">
+                <li>Nom : GitHub Inc.</li>
+                <li>Adresse : 88 Colin P Kelly Jr St, San Francisco, CA 94107, USA</li>
+            </ul>
+            <p><strong>3. Données Personnelles :</strong></p>
+            <p>Ce site n'utilise pas de cookies de traçage. Les données du formulaire sont envoyées via Formspree.</p>
+        </div>
+    </div>
+
+    <div id="modal3" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeAllModals()">&times;</span>
+            <h3>Portfolio</h3>
+            <p><strong>Contexte :</strong> Epreuve E6.</p>
+            <ul class="modal-list"><li>HTML/CSS/JS</li><li>Responsive</li><li>GitHub Pages</li></ul>
+        </div>
+    </div>
+
+    <script>
+        const themeBtn = document.getElementById('theme-toggle');
+        const body = document.body;
+        themeBtn.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            themeBtn.classList.toggle('fa-sun'); themeBtn.classList.toggle('fa-moon');
+        });
+
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initParticles(); }
+        window.addEventListener('resize', resize);
+        
+        class Particle {
+            constructor() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.vx = (Math.random()-.5); this.vy = (Math.random()-.5); this.size = Math.random()*2; }
+            update() { this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width)this.vx*=-1; if(this.y<0||this.y>canvas.height)this.vy*=-1; }
+            draw() { 
+                ctx.fillStyle = getComputedStyle(body).getPropertyValue('--particle-color').trim();
+                ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); 
+            }
+        }
+        function initParticles(){ particles=[]; for(let i=0; i<canvas.width*canvas.height/10000; i++) particles.push(new Particle()); }
+        function animate(){ 
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            particles.forEach((p, i) => {
+                p.update(); p.draw();
+                for(let j=i; j<particles.length; j++){
+                    const dx=p.x-particles[j].x, dy=p.y-particles[j].y, d=Math.sqrt(dx*dx+dy*dy);
+                    if(d<120){
+                        ctx.strokeStyle = getComputedStyle(body).getPropertyValue('--particle-color').trim();
+                        ctx.globalAlpha=1-d/120; ctx.beginPath(); ctx.lineWidth=0.5; ctx.moveTo(p.x,p.y); ctx.lineTo(particles[j].x,particles[j].y); ctx.stroke(); ctx.globalAlpha=1;
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        resize(); animate();
+
+        const burger = document.querySelector('.burger'), navLinks = document.querySelector('.nav-links');
+        burger.addEventListener('click', () => navLinks.classList.toggle('nav-active'));
+        
+        function openModal(id){ document.getElementById(id).classList.add('active'); }
+        function closeAllModals(){ document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('active')); }
+        function closeModal(e){ if(e.target.classList.contains('modal-overlay')) closeAllModals(); }
+
+        const observer = new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('active')})}, {threshold:0.1});
+        document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', e=>{ cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px'; });
+        document.querySelectorAll('.hover-target, a, button').forEach(el=>{
+            el.addEventListener('mouseenter', ()=>cursor.classList.add('hovered-cursor'));
+            el.addEventListener('mouseleave', ()=>cursor.classList.remove('hovered-cursor'));
+        });
+        document.querySelectorAll('.card').forEach(c=>{
+            if(window.innerWidth>768){
+                c.addEventListener('mousemove', e=>{
+                    const r=c.getBoundingClientRect(); c.style.transform=`perspective(1000px) rotateX(${-((e.clientY-r.top)-r.height/2)/20}deg) rotateY(${((e.clientX-r.left)-r.width/2)/20}deg) scale(1.02)`;
+                });
+                c.addEventListener('mouseleave', ()=>c.style.transform='perspective(1000px) rotateX(0) rotateY(0) scale(1)');
+            }
+        });
+    </script>
+</body>
+</html>
